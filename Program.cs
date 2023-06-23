@@ -1,4 +1,5 @@
 using FirstWebAPI.Data;
+using FirstWebAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -16,17 +17,21 @@ builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 });
 
+
+// Debug only 
+/*
 var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-
-// Retrieve the environment variable balue
-string password = Environment.GetEnvironmentVariable("PGADM_PASSWORD");
-
-string connectionString = configuration.GetConnectionString("Default").Replace("__PGADM_PASSWORD__", password);
-
-// Debug only //Password=${PGADM_PASSWORD}
+string connectionString = configuration.GetConnectionString("Default");
 Console.WriteLine("Connection String: " + connectionString);
 string envVariableValue = Environment.GetEnvironmentVariable("PGADM_PASSWORD");
 Console.WriteLine(envVariableValue);
+*/
+
+// Program.cs is the container (or Dependency Injector) and next line does the injection
+// So whenever an instance of IUserRepository is required, the dependency injection container 
+// will provide an instance of UserRepository.
+// Note: The User Controller also needs to perform the injection.
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
